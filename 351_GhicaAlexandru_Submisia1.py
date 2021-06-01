@@ -8,7 +8,7 @@ from clasificator import KNN_classifier
 from collections import Counter
 from sklearn.neighbors import KNeighborsClassifier
 from nltk.tokenize import TweetTokenizer
-np.set_printoptions(threshold=sys.maxsize)   #sa mi afiseze toata matricea
+np.set_printoptions(threshold=sys.maxsize)   
 from sklearn.naive_bayes import GaussianNB
 from sklearn import metrics
 from sklearn.metrics import fbeta_score
@@ -40,12 +40,12 @@ def tokenize(text):
     tokeni3 = re.sub(r"http\S+", " ", tokeni2)
     #tokeni4 = re.sub(r"[0-9]", "", tokeni3) #test
 
-    tokeni = nltk.TweetTokenizer(strip_handles=True, reduce_len=True).tokenize(tokeni3) #prezerve case e default True
+    tokeni = nltk.TweetTokenizer(strip_handles=True, reduce_len=True).tokenize(tokeni3) 
     #tokeni = RegexpTokenizer('\w+|\$[\d\.]+|\S+').tokenize(tokeni4)
     #tokeni = RegexpTokenizer("[\w']+").tokenize(tokeni3)
 
     for i in tokeni:
-        if len(i)>20 or len(i)<3:   # cu 3 e mai bine
+        if len(i)>20 or len(i)<3:   
             tokeni.remove(i)
     return tokeni
 
@@ -105,7 +105,6 @@ def write_prediction(out_file, predictions):
 '''def split(data, labels,  procentaj_valid = 0.25):
     
     #75% train, 25% valid
-    #mai intai facem shuffle la date
     
     indici = np.arrange(len(labels))
     random.shuffle(indici)
@@ -155,20 +154,17 @@ if __name__ == '__main__':
 
 
 
-
 train_df = pd.read_csv('train.csv')
 test_df = pd.read_csv('test.csv')
 
 
 toate_cuvintele = get_corpus_vocabulary(train_df['text'])
-wd2idx, idx2wd = get_representation(toate_cuvintele,1400)  #50-KNN #1400 #2000/1500  # gauss 2000-0.838/1700-0.842     ->>1600Multi<--
-                                                           # ->>1600Multi1400<--    1600-Complement 1000-Bernoulli
-data = corpus_to_bow(train_df['text'],wd2idx)              # Complement: 1700,1500   SVC = 400 - 600(2) , 700(de incercat)
+wd2idx, idx2wd = get_representation(toate_cuvintele,1400) 
+                                                           
+data = corpus_to_bow(train_df['text'],wd2idx)              
 labels = train_df['label']
 
 test_data = corpus_to_bow(test_df['text'],wd2idx)
-
-#print(toate_cuvintele.most_common(10))
 
 
 date_noi1 = data[:4500, :]
@@ -177,7 +173,7 @@ labels_noi1 = train_df['label'][:4500]
 test_labels1 = train_df['label'][4500:5000]
 
 
-clf1 = MultinomialNB()  # 0.814 acc si 0.82681 F1     cu Multinomial
+clf1 = MultinomialNB()  
 clf1.fit(date_noi1,labels_noi1)
 predictii1 = clf1.predict(date_test1)
 print((predictii1==test_labels1).mean())
@@ -189,12 +185,10 @@ print((predictii1==test_labels1).mean())
 print("F1:",metrics.f1_score(test_labels1, clf1.predict(date_test1)))'''
 
 
-#clf2 = SVC(C=3)        #0.846 , F1=0.85871 , media 0.87028(cu 2) -  toate cu 800
-#clf2 = ComplementNB() #0.848 ,  F1 = 0.85977  , media 0.8687( cu 3)
-clf2 = MultinomialNB()  #0.844 ,  F1 = 0.8555   , media 0.8659 (cu 4)
-                       #0.852 ,  F1 = 0.86346  , media 0.86619(cu 3 si 900)
-                       #0.854 ,  F1 = 0.8650   , media 0.86607(cu 3 si 1000)
-
+#clf2 = SVC(C=3)        
+#clf2 = ComplementNB() 
+clf2 = MultinomialNB()  
+                      
 
 matrice_totala = np.zeros((2,2))
 #for i in range(6):
